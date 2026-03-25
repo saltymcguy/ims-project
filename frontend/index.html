@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMS</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <h1>IMS</h1>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Login</button><br><br>
+      <button class="tab" onclick="switchTab('register')">Register</button><br><br>
+    </div>
+
+    <div id="auth-error" class="error-msg"></div>
+
+    <div id="login-form">
+      <input id="login-user" placeholder="Username">
+      <input id="login-pass" type="password" placeholder="Password">
+      <button onclick="doLogin()">Login</button>
+    </div>
+
+    <div id="register-form" style="display:none;">
+      <input id="reg-user" placeholder="Username">
+      <input id="reg-pass" type="password" placeholder="Password">
+      <input id="reg-confirm" type="password" placeholder="Confirm Password">
+      <button onclick="doRegister()">Register</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen" style="display:none;">
+  <nav>
+    <button onclick="showPanel('dashboard')">Dashboard</button>
+    <button onclick="showPanel('inventory')">Inventory</button>
+    <button onclick="showPanel('transactions')">Transactions</button>
+    <button onclick="showPanel('users')">Users</button>
+    <span id="nav-user-label"></span>
+    <button onclick="doLogout()">Logout</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div id="panel-dashboard" class="panel">
+    <h2>Dashboard</h2>
+    <p>Total Items: <span id="stat-items"></span></p>
+    <p>Total Quantity: <span id="stat-qty"></span></p>
+    <p>Total Transactions: <span id="stat-txn"></span></p>
+    <p>Total Users: <span id="stat-users"></span></p>
+  </div>
+
+  <!-- INVENTORY -->
+  <div id="panel-inventory" class="panel">
+    <h2>Inventory</h2>
+
+    <div style="display:flex; gap:10px; margin-bottom:10px;">
+      <input id="search-input" placeholder="Search items..." oninput="filterInventory()">
+      <button onclick="openAddModal()">+ Add Item</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Qty</th>
+          <th>Location</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="inv-body"></tbody>
+    </table>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div id="panel-transactions" class="panel">
+    <h2>Transactions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Item</th>
+          <th>Type</th>
+          <th>Qty</th>
+        </tr>
+      </thead>
+      <tbody id="txn-body"></tbody>
+    </table>
+  </div>
+
+  <!-- USERS -->
+  <div id="panel-users" class="panel">
+    <h2>Users</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody id="users-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div id="modal-add" style="display:none;">
+  <input id="add-name" placeholder="Name">
+  <input id="add-qty" type="number" placeholder="Qty">
+  <input id="add-loc" placeholder="Location">
+  <button onclick="doAddItem()">Add</button>
+</div>
+
+<script>
+const API = "http://127.0.0.1:5000/api";
+let currentUser = null;
+let inventoryData = [];
+
+/* ---------- AUTH ---------- */
+function switchTab(tab){
+  document.getElementById("login-form").style.display =
+    tab === "login" ? "block" : "none";
+
+  document.getElementById("register-form").style.display =
+    tab === "register" ? "block" : "none";
+}
+
+function showError(msg){
+  document.getElementById("auth-error").textContent = msg;
+}
+
+async function doLogin(){
+  const username = document.getElementById("login-user").value;
+  const password = document.getElementById("login-pass").value;
+
+  try{
+    const res = await fetch(API+"/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+    });
+
+    const data = await res.json();
+
+    if(!res.ok){
+      showError(data.error);
+      return;
+    }
+
+    currentUser = data;
+    enterApp();
+
+  }catch{
+    showError("Cannot connect to server");
+  }
+}
+
+async function doRegister(){
+  const username = document.getElementById("reg-user").value;
+  const password = document.getElementById("reg-pass").value;
+  const confirm = document.getElementById("reg-confirm").value;
+
+  if(password !== confirm){
+    showError("Passwords do not match");
+    return;
+  }
+
+  await fetch(API+"/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({username,password})
+  });
+
+  switchTab("login");
+}
+
+function doLogout(){
+  location.reload();
+}
+
+/* ---------- APP ---------- */
+function enterApp(){
+  document.getElementById("auth-screen").style.display="none";
+  document.getElementById("app-screen").style.display="block";
+
+  document.getElementById("nav-user-label").textContent =
+    currentUser.username + " (" + currentUser.role + ")";
+
+  showPanel("dashboard");
+}
+
+function showPanel(name){
+  document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+  document.getElementById("panel-"+name).style.display="block";
+
+  if(name==="dashboard") loadDashboard();
+  if(name==="inventory") loadInventory();
+  if(name==="transactions") loadTransactions();
+  if(name==="users") loadUsers();
+}
+
+/* ---------- LOADERS ---------- */
+async function loadDashboard(){
+  const inv = await fetch(API+"/inventory").then(r=>r.json());
+  const txn = await fetch(API+"/transactions").then(r=>r.json());
+  const users = await fetch(API+"/users").then(r=>r.json());
+
+  document.getElementById("stat-items").textContent = inv.length;
+  document.getElementById("stat-qty").textContent =
+    inv.reduce((a,b)=>a+b.quantity,0);
+  document.getElementById("stat-txn").textContent = txn.length;
+  document.getElementById("stat-users").textContent = users.length;
+}
+
+async function loadInventory(){
+  const data = await fetch(API+"/inventory").then(r=>r.json());
+  inventoryData = data;
+  renderInventory(data);
+}
+
+function renderInventory(data){
+  document.getElementById("inv-body").innerHTML =
+    data.map(i=>`
+      <tr>
+        <td>${i.item_id}</td>
+        <td>${i.item_name}</td>
+        <td>${i.quantity}</td>
+        <td>${i.location}</td>
+        <td>
+          <button onclick="doDeleteItem(${i.item_id})">Delete</button>
+        </td>
+      </tr>
+    `).join("");
+}
+
+function filterInventory(){
+  const query = document.getElementById("search-input").value.toLowerCase();
+
+  const filtered = inventoryData.filter(item =>
+    item.item_name.toLowerCase().includes(query) ||
+    item.location.toLowerCase().includes(query)
+  );
+
+  renderInventory(filtered);
+}
+
+async function loadTransactions(){
+  const data = await fetch(API+"/transactions").then(r=>r.json());
+
+  document.getElementById("txn-body").innerHTML =
+    data.map(t=>`
+      <tr>
+        <td>${t.transaction_id}</td>
+        <td>${t.username}</td>
+        <td>${t.item_name}</td>
+        <td>${t.change_type}</td>
+        <td>${t.quantity_change}</td>
+      </tr>
+    `).join("");
+}
+
+async function loadUsers(){
+  const data = await fetch(API+"/users").then(r=>r.json());
+
+  document.getElementById("users-body").innerHTML =
+    data.map(u=>`
+      <tr>
+        <td>${u.user_id}</td>
+        <td>${u.username}</td>
+        <td>${u.role}</td>
+      </tr>
+    `).join("");
+}
+
+/* ---------- ACTIONS ---------- */
+function openAddModal(){
+  document.getElementById("modal-add").style.display="block";
+}
+
+async function doAddItem(){
+  const name = document.getElementById("add-name").value;
+  const quantity = document.getElementById("add-qty").value;
+  const location = document.getElementById("add-loc").value;
+
+  await fetch(API+"/inventory",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name,quantity,location,user_id:currentUser.user_id})
+  });
+
+  loadInventory();
+}
+
+async function doDeleteItem(id){
+  await fetch(API+"/inventory/"+id,{
+    method:"DELETE",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({user_id:currentUser.user_id})
+  });
+
+  loadInventory();
+}
+</script>
+
+</body>
+</html>

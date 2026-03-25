@@ -1,0 +1,197 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* BACKGROUND */
+body {
+  background: radial-gradient(circle at 20% 40%, #1a1f5a, #0f1117 60%);
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(30, 34, 60, 0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-brand {
+  font-weight: 700;
+  font-size: 18px;
+  background: linear-gradient(135deg, #6c63ff, #00d4aa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-right: auto;
+}
+
+nav button {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #94a3b8;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+nav button:hover {
+  background: #6c63ff;
+  color: white;
+  border-color: #6c63ff;
+}
+
+/* USER LABEL */
+#nav-user-label {
+  margin-left: 12px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+/* MAIN */
+main {
+  padding: 30px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* HEADINGS */
+h2 {
+  margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* DASHBOARD STATS */
+#panel-dashboard p {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+/* PANELS */
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(35, 38, 64, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead {
+  background: rgba(255,255,255,0.05);
+}
+
+th {
+  padding: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  text-align: left;
+}
+
+td {
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+tr:hover td {
+  background: rgba(108,99,255,0.08);
+}
+
+/* BUTTONS */
+button {
+  font-size: 12px;
+}
+
+/* ACTION BUTTONS */
+td button {
+  margin-right: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+td button:first-child {
+  background: #ffb347;
+  color: black;
+}
+
+td button:last-child {
+  background: #ff4d6d;
+  color: white;
+}
+
+/* LOGIN */
+#auth-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-box {
+  background: rgba(35, 38, 64, 0.8);
+  backdrop-filter: blur(12px);
+  padding: 30px;
+  border-radius: 14px;
+  width: 320px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.auth-box h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #2d3148;
+  background: #1a1d2e;
+  color: white;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #6c63ff, #8b5cf6);
+  color: white;
+  cursor: pointer;
+}
+
+/* ERROR */
+.error-msg {
+  background: rgba(255,77,109,.15);
+  border: 1px solid #ff4d6d;
+  color: #ff4d6d;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: none;
+}

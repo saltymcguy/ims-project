@@ -1,0 +1,5 @@
+pytest
+mysql-connector-python
+bcrypt
+python-dotenv
+flake8
