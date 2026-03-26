@@ -174,27 +174,13 @@ DELETE
 
 Delete user
 
-⚠️ Known Limitations
-
-No authentication tokens (JWT not implemented)
-
-Minimal input validation
-
-No pagination for large datasets
-
-Basic error handling
-
 🚧 Future Improvements
-
-Add JWT Authentication
 
 Improve UI/UX
 
 Add search & filtering
 
 Implement pagination
-
-Deploy backend & frontend
 
 🗄️ Database Schema
 
@@ -229,7 +215,3 @@ CREATE TABLE transactions (
 👤 Author
 
 John Philipose
-
-📜 License
-
-This project is for educational purposes.
