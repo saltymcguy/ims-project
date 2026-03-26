@@ -1,7 +1,6 @@
 @echo off
 title IMS Project
 
-:: Change to the directory where this .bat file is located
 cd /d "%~dp0"
 
 echo Starting Flask backend...
