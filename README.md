@@ -69,6 +69,13 @@ cd ims-project
 python -m venv venv
 venv\Scripts\activate
 
+note: if it fails to create a Virtual Environment with an error:
+cannot be loaded because running scripts is disabled on this system. For 
+more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+
+run:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
 3. Install Dependencies
 
 pip install -r requirements.txt
