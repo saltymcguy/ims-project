@@ -1,110 +1,235 @@
-# Inventory Management System (IMS)
+Inventory Management System (IMS)
 
-A Python CLI application for managing warehouse inventory, built with MySQL.
+A full-stack Inventory Management System built with Flask, MySQL, and a custom HTML/CSS/JavaScript frontend. This project supports role-based access (Admin/Staff), inventory tracking, transaction logging, and user management.
 
-![CI](https://github.com/<your-username>/ims/actions/workflows/ci.yml/badge.svg)
+🚀 Features
 
----
+🔐 User Authentication (Login / Register)
 
-## Project Structure
+👥 Role-based Access (Admin & Staff)
 
-```
+📦 Inventory Management (Add, Update, Delete items)
+
+📊 Transaction Logging
+
+🧑‍💼 User Management (Admin only)
+
+🌐 REST API using Flask
+
+🛠 Tech Stack
+
+Backend:
+
+Python (Flask)
+
+MySQL
+
+bcrypt (password hashing)
+
+Frontend:
+
+HTML
+
+CSS
+
+JavaScript (Fetch API)
+
+📂 Project Structure
+
 ims-project/
+│
 ├── backend/
-│   ├── main.py          # Entry point — menus and app flow
-│   ├── db_connect.py    # MySQL connection (reads from .env)
-│   ├── login.py         # Authentication with bcrypt
-│   ├── register.py      # New user registration
-│   ├── inventory.py     # CRUD for inventory items
-│   ├── transactions.py  # Transaction log
-│   └── admin.py         # User management (admin only)
+│   ├── app.py
+│   ├── db_connect.py
+│   ├── login.py
+│   ├── register.py
+│   ├── inventory.py
+│   ├── transactions.py
+│   └── admin.py
+│
+├── frontend/
+│   ├── index.html
+│   └── style.css
+│
 ├── tests/
-│   └── test_ims.py      # Pytest unit tests (fully mocked)
-├── db/
-│   └── schema.sql       # MySQL schema (auto-loaded by Docker)
-├── .github/
-│   └── workflows/
-│       └── ci.yml       # GitHub Actions — lint, test, deploy
-├── .env.example         # Template for environment variables
-├── .gitignore
-├── .flake8
-├── pytest.ini
+│
+├── .env.example
 ├── requirements.txt
-├── Dockerfile
-└── docker-compose.yml
-```
+└── README.md
 
----
+⚙️ Setup Instructions
 
-## Quick Start (Docker — recommended)
+1. Clone the Repository
 
-```bash
-# 1. Clone the repo
-git clone https://github.com/<your-username>/ims.git
-cd ims
+git clone <your-repo-url>
+cd ims-project
 
-# 2. Create your .env file
-cp .env.example .env
-# Edit .env and set a real DB_PASSWORD
+2. Create Virtual Environment
 
-# 3. Start the app + MySQL
-docker compose up --build
-```
-
-## Quick Start (Local)
-
-```bash
-# 1. Create and activate a virtual environment
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate
 
-# 2. Install dependencies
+3. Install Dependencies
+
 pip install -r requirements.txt
 
-# 3. Configure environment
-cp .env.example .env
-# Fill in your DB credentials in .env
+4. Configure Environment Variables
 
-# 4. Run the app
-cd src
-python main.py
-```
+Create a .env file in the root directory:
 
----
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=warehouse
 
-## Running Tests
+⚠️ Do NOT commit .env to GitHub.
 
-```bash
-pytest
-```
+5. Setup MySQL Database
 
-Tests use mocks — no live database required.
+Make sure MySQL is running, then create database:
 
----
+CREATE DATABASE warehouse;
 
-## CI/CD Pipeline (GitHub Actions)
+Create required tables (users, inventory, transactions) before running.
 
-Every push and pull request automatically:
-1. **Lints** the code with `flake8`
-2. **Tests** on Python 3.10, 3.11, and 3.12 with a real MySQL service container
-3. **Deploys** via FTP to the host server on merge to `main`
+6. Run Backend Server
 
-### Required GitHub Secrets
+python backend/app.py
 
-| Secret | Description |
-|---|---|
-| `DB_PASSWORD` | MySQL root password used in the CI service container |
-| `FTP_SERVER` | Hostname of your deployment server |
-| `FTP_USERNAME` | FTP username |
-| `FTP_PASSWORD` | FTP password |
+Server runs at:
 
----
+http://127.0.0.1:5000
 
-## Environment Variables
+7. Run Frontend
 
-| Variable | Default | Description |
-|---|---|---|
-| `DB_HOST` | `localhost` | MySQL host |
-| `DB_USER` | `root` | MySQL user |
-| `DB_PASSWORD` | _(none)_ | MySQL password — **required** |
-| `DB_NAME` | `warehouse` | Database name |
+Open frontend using Live Server or directly:
+
+frontend/index.html
+
+🔌 API Endpoints
+
+Method
+
+Endpoint
+
+Description
+
+POST
+
+/api/login
+
+User login
+
+POST
+
+/api/register
+
+User registration
+
+GET
+
+/api/inventory
+
+Get all items
+
+POST
+
+/api/inventory
+
+Add item
+
+PUT
+
+/api/inventory/
+
+Update item quantity
+
+DELETE
+
+/api/inventory/
+
+Delete item
+
+GET
+
+/api/transactions
+
+View transactions
+
+GET
+
+/api/users
+
+View users
+
+PUT
+
+/api/users//role
+
+Change user role
+
+DELETE
+
+/api/users/
+
+Delete user
+
+⚠️ Known Limitations
+
+No authentication tokens (JWT not implemented)
+
+Minimal input validation
+
+No pagination for large datasets
+
+Basic error handling
+
+🚧 Future Improvements
+
+Add JWT Authentication
+
+Improve UI/UX
+
+Add search & filtering
+
+Implement pagination
+
+Deploy backend & frontend
+
+🗄️ Database Schema
+
+Below is the SQL schema required for the application:
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('admin','staff') DEFAULT 'staff'
+);
+
+CREATE TABLE inventory (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    item_name VARCHAR(100) NOT NULL,
+    quantity INT DEFAULT 0,
+    location VARCHAR(100),
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT,
+    user_id INT,
+    change_type ENUM('add','adjust','remove'),
+    quantity_change INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (item_id) REFERENCES inventory(item_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+👤 Author
+
+John Philipose
+
+📜 License
+
+This project is for educational purposes.
