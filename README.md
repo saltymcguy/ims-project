@@ -82,8 +82,6 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=warehouse
 
-⚠️ Do NOT commit .env to GitHub.
-
 5. Setup MySQL Database
 
 Make sure MySQL is running, then create database:
@@ -92,19 +90,9 @@ CREATE DATABASE warehouse;
 
 Create required tables (users, inventory, transactions) before running.
 
-6. Run Backend Server
+6. Run start.bat
 
-python backend/app.py
-
-Server runs at:
-
-http://127.0.0.1:5000
-
-7. Run Frontend
-
-Open frontend using Live Server or directly:
-
-frontend/index.html
+Finally run start.bat file which runs the backend and frontend together
 
 🔌 API Endpoints
 
