@@ -37,24 +37,45 @@ JavaScript (Fetch API)
 📂 Project Structure
 
 ims-project/
+
 │
+
 ├── backend/
+
 │   ├── app.py
+
 │   ├── db_connect.py
+
 │   ├── login.py
+
 │   ├── register.py
+
 │   ├── inventory.py
+
 │   ├── transactions.py
+
 │   └── admin.py
+
 │
+
 ├── frontend/
+
 │   ├── index.html
+
 │   └── style.css
+
 │
+
 ├── tests/
+
+│   └── test_ims.py
+
 │
-├── .env.example
+
+├── pytest.ini
+
 ├── requirements.txt
+
 └── README.md
 
 ⚙️ Setup Instructions
