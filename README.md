@@ -67,6 +67,7 @@ cd ims-project
 2. Create Virtual Environment
 
 python -m venv venv
+
 venv\Scripts\activate
 
 note: if it fails to create a Virtual Environment with an error:
