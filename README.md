@@ -1,5 +1,7 @@
 Inventory Management System (IMS)
 
+temporary change
+
 A full-stack Inventory Management System built with Flask, MySQL, and a custom HTML/CSS/JavaScript frontend. This project supports role-based access (Admin/Staff), inventory tracking, transaction logging, and user management.
 
 🚀 Features
