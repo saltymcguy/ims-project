@@ -61,7 +61,7 @@ ims-project/
 
 1. Clone the Repository
 
-git clone <your-repo-url>
+git clone https://github.com/saltymcguy/ims-project.git   
 cd ims-project
 
 2. Create Virtual Environment
